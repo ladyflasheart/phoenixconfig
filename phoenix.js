@@ -109,10 +109,6 @@ var Position = {
     }
 };
 
-var divide = function (measurement, divisor) {
-    return Math.floor(measurement/divisor);
-};
-
 
 /* Window Functions */
 
@@ -217,7 +213,7 @@ Space.prototype.tile = function() {
     var frame = this.screen().visibleFrameInRectangle();
 
     if (numTiles > 4) { //more than 4 visible windows then cascade instead of tile
-        //this.cascade();
+        this.cascade(visWindows, frame);
     } else {
         for (var i = 0; i < numTiles; i++) {
             var adjustment = this.tileCalculate(i, numTiles, frame);
@@ -278,6 +274,18 @@ Space.prototype.tileCalculate = function(windowIndex, totalTiles, screenFrame) {
     }
 
     return { x : newX, y : newY , width : newWidth, height : newHeight};
+}
+
+Space.prototype.cascade = function(windows, frame) {
+    var numWindows = windows.length;
+    var halfFrameWidth = frame.width / 2;
+    var halfFrameHeight = frame.height / 2;
+    var xShift = halfFrameWidth / numWindows;
+    var yShift = halfFrameHeight / numWindows;
+    for (var i = 0; i < numWindows; i++) {
+        windows[i].setSize({ width: halfFrameWidth, height: halfFrameHeight });
+        windows[i].setTopLeft( { x: frame.x + xShift * i, y: frame.y + yShift * i})
+    }
 }
 
 
@@ -369,9 +377,12 @@ keys.push(Phoenix.bind('M', controlShift, function () {
 
 }));
 
-
 /*Tile*/
 keys.push(Phoenix.bind('T', controlShift, function () {
     Space.activeSpace() && Space.activeSpace().tile();
 }));
 
+/*Cascade*/
+keys.push(Phoenix.bind('C', controlShift, function () {
+    Space.activeSpace() && Space.activeSpace().cascade(Space.activeSpace().visibleWindows(), Space.activeSpace().screen().visibleFrameInRectangle());;
+}));
