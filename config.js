@@ -362,9 +362,8 @@ keys.push(Phoenix.bind('U', controlAltShift, function () {
 
 /* Window fill visible screen */
 keys.push(Phoenix.bind('M', controlShift, function () {
-    Window.focusedWindow && Window.focusedWindow().maximimise();
+    Window.focusedWindow && Window.focusedWindow().maximize();
 }));
-
 
 
 
